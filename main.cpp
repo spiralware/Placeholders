@@ -14,7 +14,7 @@ public:
 };
 
 template<typename Head, typename ... Tail>
-class N_th<0, Head, Tail ...>
+class N_th<0, Head, Tail...>
 {
 public:
     typedef Head type;
@@ -54,13 +54,22 @@ int main()
 {
     //=======================================================
 
-    using type_to_test = N_th<2, A, B, C>::type;
-    std::cout << typeid(type_to_test).name() << std::endl;
-    
+    std::cout << typeid(N_th<0, int, double, std::string>::type).name() << std::endl;
+    std::cout << typeid(N_th<1, int, double, std::string>::type).name() << std::endl;
+    std::cout << typeid(N_th<2, int, double, std::string>::type).name() << std::endl;
+
+    std::cout << typeid(N_th<0, A, B, C>::type).name() << std::endl;
+    std::cout << typeid(N_th<1, A, B, C>::type).name() << std::endl;
+    std::cout << typeid(N_th<2, A, B, C>::type).name() << std::endl;
+
     //=======================================================
 
-    placeholder<2> pl;
-    std::cout << pl(5, "c_str", 3.14) << std::endl;
+    placeholder<0> pl_0;
+    placeholder<1> pl_1;
+    placeholder<2> pl_2;
+    std::cout << pl_0(5, "c_str", 3.14) << std::endl;
+    std::cout << pl_1(5, "c_str", 3.14) << std::endl;
+    std::cout << pl_2(5, "c_str", 3.14) << std::endl;
 
     return 0;
 }
