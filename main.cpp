@@ -2,25 +2,34 @@
 
 #include <iostream>
 #include <string>
+#include <typeinfo>
 
-template<size_t N, typename ... Args>
+//=======================================================
+
+template<size_t N, typename Head, typename ... Tail>
 class N_th
 {
+public:
+    typedef typename N_th<N - 1, Tail...>::type type;
 };
 
-template<size_t N>
-class placeholder
+template<typename Head, typename ... Tail>
+class N_th<0, Head, Tail ...>
 {
 public:
-    template<typename ... Args>
-    void operator()(Args ... args)
+    typedef Head type;
+};
+
+//=======================================================
+
+template<size_t N>
+class placeholder : placeholder<N - 1>
+{
+public:
+    template<typename Head, typename ... Tail>
+    typename N_th<N, Head, Tail...>::type operator()(Head head, Tail ... tail)
     {
-        /*if (N == 0)
-        return arg1;
-        if (N == 1)
-        return arg2;
-        if (N == 2)
-        return arg3;*/
+        return placeholder<N - 1>::operator()(tail...);
     }
 };
 
@@ -35,42 +44,23 @@ public:
     }
 };
 
-/*template<>
-class placeholder<1>
-{
-public:
-    template<typename arg1_t, typename arg2_t, typename arg3_t>
-    arg1_t operator()(const arg1_t& arg1, const arg2_t& arg2, const arg3_t& arg3)
-    {
-        return arg1;
-    }
-};
+//=======================================================
 
-template<>
-class placeholder<2>
-{
-public:
-    template<typename arg1_t, typename arg2_t, typename arg3_t>
-    arg2_t operator()(const arg1_t& arg1, const arg2_t& arg2, const arg3_t& arg3)
-    {
-        return arg2;
-    }
-};
-
-template<>
-class placeholder<3>
-{
-public:
-    template<typename arg1_t, typename arg2_t, typename arg3_t>
-    arg3_t operator()(const arg1_t& arg1, const arg2_t& arg2, const arg3_t& arg3)
-    {
-        return arg3;
-    }
-};*/
+class A {};
+class B {};
+class C {};
 
 int main()
 {
-    placeholder<0> pl;
-    std::cout << pl(5);
+    //=======================================================
+
+    using type_to_test = N_th<2, A, B, C>::type;
+    std::cout << typeid(type_to_test).name() << std::endl;
+    
+    //=======================================================
+
+    placeholder<2> pl;
+    std::cout << pl(5, "c_str", 3.14) << std::endl;
+
     return 0;
 }
